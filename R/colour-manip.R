@@ -62,11 +62,7 @@ alpha <- function(colour, alpha = NA) {
       colour <- rep(colour, length.out = length(alpha))
     }
   }
-
-  rgb <- farver::decode_colour(colour, alpha = TRUE)
-  rgb[!is.na(alpha), 4] <- alpha[!is.na(alpha)]
-
-  farver::encode_colour(rgb, rgb[, 4])
+  farver::set_channel(colour, "alpha", as.numeric(alpha))
 }
 
 #' Show colours
