@@ -55,10 +55,7 @@ alpha <- function(colour, alpha = NA) {
     if (length(colour) > 1 && length(alpha) > 1) {
       cli::cli_abort("Only one of {.arg colour} and {.arg alpha} can be vectorised")
     }
-
-    if (length(colour) > 1) {
-      alpha <- rep(alpha, length.out = length(colour))
-    } else {
+    if (length(alpha) > 1) {
       colour <- rep(colour, length.out = length(alpha))
     }
   }
