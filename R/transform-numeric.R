@@ -450,8 +450,8 @@ reciprocal_trans <- transform_reciprocal
 transform_reverse <- function() {
   new_transform(
     "reverse",
-    function(x) -x,
-    function(x) -x,
+    function(x) -as.numeric(x),
+    function(x) -as.numeric(x),
     d_transform = function(x) rep(-1, length(x)),
     d_inverse = function(x) rep(-1, length(x)),
     minor_breaks = regular_minor_breaks(reverse = TRUE)
