@@ -11,7 +11,7 @@ minor_breaks_log(detail = NULL, smallest = NULL)
 powers, multiples of 5 of powers or just powers respectively.}
 
 \item{smallest}{Smallest absolute value to mark when the range includes
-negative numbers.}
+non-positive numbers.}
 }
 \value{
 A function to generate minor ticks.

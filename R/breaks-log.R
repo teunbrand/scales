@@ -25,6 +25,8 @@
 #' breaks, `>= n-2`, are returned or all candidates have been used.
 #' @param n desired number of breaks
 #' @param base base of logarithm to use
+#' @param smallest Smallest absolute value to mark when the range includes
+#'   non-positive numbers.
 #'
 #' @inherit breaks_width return
 #'
@@ -123,7 +125,7 @@ log_breaks <- breaks_log
 #' @param detail Any of `1`, `5` and `10` to mark multiples of
 #'   powers, multiples of 5 of powers or just powers respectively.
 #' @param smallest Smallest absolute value to mark when the range includes
-#'   negative numbers.
+#'   non-positive numbers.
 #'
 #' @return A function to generate minor ticks.
 #'

@@ -5,12 +5,15 @@
 \alias{log_breaks}
 \title{Breaks for log axes}
 \usage{
-breaks_log(n = 5, base = 10)
+breaks_log(n = 5, base = 10, smallest = NULL)
 }
 \arguments{
 \item{n}{desired number of breaks}
 
 \item{base}{base of logarithm to use}
+
+\item{smallest}{Smallest absolute value to mark when the range includes
+non-positive numbers.}
 }
 \value{
 All \code{breaks_()} functions return a function for generating breaks. These
