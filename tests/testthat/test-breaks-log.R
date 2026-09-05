@@ -91,6 +91,12 @@ test_that("breaks_log with very small ranges fall back to extended_breaks", {
   ))
 })
 
+test_that("breaks_log deal with non-positive numbers", {
+  expect_contains(breaks_log()(c(0, 100)), 0)
+  expect_contains(breaks_log()(c(-100, 100)), c(-100, 0, 100))
+  expect_contains(breaks_log()(c(-1e4, -1e2)), c(-100, -10000))
+})
+
 test_that("minor_breaks_log has correct amount of detail", {
   range <- c(1, 10)
 
