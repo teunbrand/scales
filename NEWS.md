@@ -1,5 +1,7 @@
 # scales (development version)
 
+* New `breaks_log(smallest)` argument to deal with non-positive ranges (#502).
+
 # scales 1.4.0
 * Range training now supports custom classes. Continuous classes require a
   `range()` method that returns numeric values. Discrete classes require a
