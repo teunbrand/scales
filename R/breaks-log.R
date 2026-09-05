@@ -59,6 +59,14 @@ breaks_log <- function(n = 5, base = 10, smallest = NULL) {
     if (any(!is.finite(raw_rng))) {
       return(numeric())
     }
+
+    # Flip signs if we have a negative range
+    if (all(x <= 0, na.rm = TRUE) && any(x < 0, na.rm = TRUE)) {
+      breaks <- breaks_log(n = n, base = base, smallest = smallest)
+      breaks <- -1 * breaks(-1 * x, n = n)
+      return(breaks)
+    }
+
     has_negatives <- any(x <= 0, na.rm = TRUE)
     if (has_negatives) {
       large <- max(abs(x), na.rm = TRUE)
