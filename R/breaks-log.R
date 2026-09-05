@@ -43,13 +43,29 @@
 #'
 #' # An even smaller range that requires falling back to linear breaks
 #' demo_log10(c(1800, 2000))
-breaks_log <- function(n = 5, base = 10) {
-  force_all(n, base)
+breaks_log <- function(n = 5, base = 10, smallest = NULL) {
+  force_all(n, base, smallest)
+  if (
+    !is.null(smallest) &&
+      (!length(smallest) == 1 || smallest < 1e-100 || !is.finite(smallest))
+  ) {
+    cli::cli_abort(
+      "The {.arg smallest} argument must be a finite, positive, non-zero number."
+    )
+  }
   n_default <- n
   function(x, n = n_default) {
     raw_rng <- suppressWarnings(range(x, na.rm = TRUE))
     if (any(!is.finite(raw_rng))) {
       return(numeric())
+    }
+    has_negatives <- any(x <= 0, na.rm = TRUE)
+    if (has_negatives) {
+      large <- max(abs(x), na.rm = TRUE)
+      small <- smallest %||% min(c(1, large) * 0.1)
+      raw_rng <- sort(c(small * 10, large))
+      # Decrement `n` because including 0 'consumes' one break
+      n <- max(n - 1, 1)
     }
 
     rng <- log(raw_rng, base = base)
@@ -63,6 +79,9 @@ breaks_log <- function(n = 5, base = 10) {
     by <- floor((max - min) / n) + 1
     breaks <- base^seq(min, max, by = by)
     relevant_breaks <- base^rng[1] <= breaks & breaks <= base^rng[2]
+    if (has_negatives) {
+      breaks <- c(breaks, 0, -breaks)
+    }
     if (sum(relevant_breaks) >= (n - 2)) {
       return(breaks)
     }
@@ -72,11 +91,14 @@ breaks_log <- function(n = 5, base = 10) {
       by <- by - 1
       breaks <- base^seq(min, max, by = by)
       relevant_breaks <- base^rng[1] <= breaks & breaks <= base^rng[2]
+      if (has_negatives) {
+        breaks <- c(breaks, 0, -breaks)
+      }
       if (sum(relevant_breaks) >= (n - 2)) {
         return(breaks)
       }
     }
-    log_sub_breaks(rng, n = n, base = base)
+    log_sub_breaks(rng, n = n, base = base, has_negatives = has_negatives)
   }
 }
 
@@ -172,7 +194,7 @@ minor_breaks_log <- function(detail = NULL, smallest = NULL) {
 
 #' @author Thierry Onkelinx, \email{thierry.onkelinx@inbo.be}
 #' @noRd
-log_sub_breaks <- function(rng, n = 5, base = 10) {
+log_sub_breaks <- function(rng, n = 5, base = 10, has_negatives = FALSE) {
   min <- floor(rng[1])
   max <- ceiling(rng[2])
   if (base <= 2) {
@@ -201,8 +223,13 @@ log_sub_breaks <- function(rng, n = 5, base = 10) {
     breaks <- sort(breaks)
     lower_end <- pmax(min(which(base^rng[1] <= breaks)) - 1, 1)
     upper_end <- pmin(max(which(breaks <= base^rng[2])) + 1, length(breaks))
-    breaks[lower_end:upper_end]
+    breaks <- breaks[lower_end:upper_end]
   } else {
-    extended_breaks(n = n)(base^rng)
+    breaks <- extended_breaks(n = n)(base^rng)
+  }
+  if (has_negatives) {
+    c(breaks, 0, -breaks)
+  } else {
+    breaks
   }
 }
